@@ -81,4 +81,67 @@ public class UserService {
             e.printStackTrace();
         }
     }
+
+    public static User getUserById(HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            ResultSet resultUserSet = UserModel.findById(id);
+            User userUpdate = null;
+            if (resultUserSet.next()) {
+                int idUser = resultUserSet.getInt("id");
+                String name = resultUserSet.getString("name");
+                String email = resultUserSet.getString("email");
+                String phone = resultUserSet.getString("phone");
+                String address = resultUserSet.getString("address");
+                String department_id = resultUserSet.getString("department_id");
+
+
+                userUpdate = new User(name, email, phone, address);
+                userUpdate.setId(idUser);
+
+                if (department_id != null) {
+                    int departmentId = Integer.parseInt(department_id);
+
+                    ResultSet resultDepartmentSet = DepartmentModel.getDepartmentById(departmentId);
+                    if (resultDepartmentSet.next()) {
+                        String dName = resultDepartmentSet.getString("name");
+                        Department department = new Department(departmentId, dName);
+                        userUpdate.setDepartment(department);
+                    }
+                }
+            }
+            return userUpdate;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void updateUser(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String name = request.getParameter("name");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            String address = request.getParameter("address");
+            int departmentId = Integer.parseInt(request.getParameter("department_id"));
+
+            User user = new User(name, email, phone, address);
+            ResultSet resultSet = DepartmentModel.getDepartmentById(departmentId);
+            if (resultSet.next()) {
+                String dName = resultSet.getString("name");
+                Department department = new Department(departmentId, dName);
+                user.setDepartment(department);
+            } else {
+                user.setDepartment(null);
+            }
+            user.setId(id);
+            UserModel.update(user);
+            response.sendRedirect("/users");
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

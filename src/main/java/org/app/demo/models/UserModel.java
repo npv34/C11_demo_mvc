@@ -50,4 +50,27 @@ public class UserModel {
         preparedStatement.executeUpdate();
     }
 
+    public static ResultSet findById(int id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setInt(1, id);
+        return preparedStatement.executeQuery();
+    }
+
+    public static void update(User user) throws SQLException {
+        String sql = "UPDATE users SET name = ?, email = ?, phone = ?, address = ?, department_id = ? WHERE id = ?";
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        preparedStatement.setString(1, user.getName());
+        preparedStatement.setString(2, user.getEmail());
+        preparedStatement.setString(3, user.getPhone());
+        preparedStatement.setString(4, user.getAddress());
+        if (user.getDepartment() != null) {
+            preparedStatement.setInt(5, user.getDepartment().getId());
+        } else {
+            preparedStatement.setNull(5, java.sql.Types.INTEGER);
+        }
+        preparedStatement.setInt(6, user.getId());
+        preparedStatement.executeUpdate();
+    }
+
 }

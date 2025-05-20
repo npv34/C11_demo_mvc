@@ -49,7 +49,7 @@ public class AuthController extends BaseController {
             case "/login":
                 // Handle login
                 if (AuthService.checkAccount(req, resp)){
-                    resp.sendRedirect("/home");
+                    resp.sendRedirect("/admin/users");
                 }else {
                     resp.sendRedirect("/auth/login?error=1");
                 }

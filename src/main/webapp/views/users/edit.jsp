@@ -7,7 +7,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-<c:set var="users" value="${requestScope['users']}" />
+<c:set var="departments" value="${requestScope['departments']}" />
+<c:set var="user" value="${requestScope['user']}" />
 <html>
 <head>
     <title>Title</title>
@@ -136,7 +137,7 @@
                             <a class="dropdown-item" href="#">Settings</a>
                         </li>
                         <li>
-                            <a class="dropdown-item"  href="/auth/login">Logout</a>
+                            <a class="dropdown-item" href="/auth/login">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -150,64 +151,55 @@
     <div class="col-12 col-md-12">
         <div class="card mt-2">
             <div class="card-header">
-                <h5>Users</h5>
-                <a href="/admin/users/create" class="btn btn-primary float-end">Create</a>
+                <h5>Edit User</h5>
             </div>
             <div class="card-body">
-                <table class="table align-middle mb-0 bg-white">
-                    <thead class="bg-light">
-                    <tr>
-                        <th>Name</th>
-                        <th>Department</th>
-                        <th>Phone</th>
-                        <th>Address</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${users}" var="user">
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img
-                                            src="https://mdbootstrap.com/img/new/avatars/8.jpg"
-                                            alt=""
-                                            style="width: 45px; height: 45px"
-                                            class="rounded-circle"
-                                    />
-                                    <div class="ms-3">
-                                        <p class="fw-bold mb-1"><c:out value="${user.getName()}"/></p>
-                                        <p class="text-muted mb-0"><c:out value="${user.getEmail()}"/></p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <p class="fw-normal mb-1">
-                                    <c:if test="${user.getDepartment() != null}">
-                                        <c:out value="${user.getDepartment().getName()}"/>
-                                    </c:if>
-                                    <c:if test="${user.getDepartment() == null}">
-                                        <span class="badge badge-danger rounded-pill d-inline">No department</span>
-                                    </c:if>
-                                </p>
-                            </td>
-                            <td>
-                                <c:out value="${user.getPhone()}"/>
-                            </td>
-                            <td>
-                                <c:out value="${user.getAddress()}"/>
-                            </td>
-                            <td>
-                                <a href="/admin/users/edit?id=<c:out value="${user.getId()}"/>" type="button" class="btn btn-link btn-sm btn-rounded">
-                                    Edit
-                                </a>
-                                <a type="button" onclick="return confirm('Are you sure?')"  class="btn btn-danger" data-mdb-ripple-init href="/admin/users/delete?id=<c:out value="${user.getId()}" />">Delete</a>
-                            </td>
-                        </tr>
-                    </c:forEach>
+                <form action="/users/edit?id=<c:out value="${user.getId()}"/>" method="post">
+                    <!-- Text input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input name="name" value="<c:out value="${user.getName()}"/>" type="text" id="form6Example3" class="form-control" />
+                        <label class="form-label" for="form6Example3">Name</label>
+                    </div>
 
-                    </tbody>
-                </table>
+                    <!-- Text input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input  name="email" value="<c:out value="${user.getEmail()}"/>" type="email" id="form6Example4" class="form-control" />
+                        <label class="form-label" for="form6Example4">Email</label>
+                    </div>
+
+                    <!-- Number input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input name="phone" type="number" value="<c:out value="${user.getPhone()}"/>" id="form6Example6" class="form-control" />
+                        <label class="form-label" for="form6Example6">Phone</label>
+                    </div>
+
+                    <div class="col-12 mb-4">
+                        <label class="visually-hidden">Department</label>
+                        <select class="form-select" name="department_id" aria-label="Default select example">
+                            <option selected>Chose departments</option>
+                            <c:forEach items="${departments}" var="department">
+                                <c:if test="${user.getDepartment().getId() == department.getId()}">
+                                    <option selected value="${department.getId()}">${department.getName()}</option>
+                                </c:if>
+                                <c:if test="${user.getDepartment().getId() != department.getId()}">
+                                    <option value="${department.id}">${department.name}</option>
+                                </c:if>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <!-- Message input -->
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <textarea name="address" class="form-control" id="form6Example7" rows="4">
+                            <c:out value="${user.getAddress()}"/>
+                        </textarea>
+                        <label class="form-label" for="form6Example7">Address</label>
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a class="btn btn-light" href="/users/">Cancel</a>
+                </form>
             </div>
         </div>
 
